@@ -33,10 +33,12 @@ Fast and accurate classification
 
  **Future Enhancements:**
 
-Integration with browser extensions for live protection
+Add a database to store user queries and results.
 
-Addition of database storage (SQLite/MySQL)
+Improve the user interface with better design.
 
-Advanced visualization of phishing detection statistics
+Include more URL features for higher accuracy.
 
-Deployment on cloud platforms (Heroku/AWS/GCP)
+Display confidence score for predictions.
+
+Deploy the web app online for public use.
