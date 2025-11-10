@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detection</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is loaded -->
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            transition: background-color 0.5s ease;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 2;
+        }
+        
+        h1, h2 {
+            margin: 20px 0;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.1);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        
+        .overlay-text {
+            font-size: 2em;
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .phishing-result {
+            color: red;
+        }
+        
+        .legitimate-result {
+            color: green;
+        }
+
+        /* Styling for the phishing warning image */
+        .phishing-image {
+            width: 80%;
+            max-width: 400px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="overlay-text">Warning: This is a phishing website!</div>
+    </div>
+    <div class="container">
+        <h1>Phishing Detection System</h1>
+        <form id="url-form">
+            <label for="url">Enter a URL to check:</label><br><br>
+            <input type="text" id="url" name="url" required><br><br>
+            <button type="submit">Check</button>
+        </form>
+        <h2>Prediction: <span id="result"></span></h2>
+
+        <!-- Image to show when the site is phishing -->
+        <img id="phishing-image" class="phishing-image" src="https://wallpapers.com/images/hd/dark-blue-hacker-mask-trwro8tw4yakvz5i.jpg" alt="Phishing Warning">
+
+    </div>
+    
+    <script>
+        $('#url-form').on('submit', function(event) {
+            event.preventDefault(); // Prevent the form from refreshing the page
+            var url = $('#url').val(); // Get the entered URL
+            
+            $.ajax({
+                url: '/check-phishing', // Backend endpoint
+                type: 'POST',
+                data: { url: url },
+                success: function(response) {
+                    var prediction = response.prediction; // Get the prediction response
+                    
+                    $('#result').text(prediction); // Update the result display
+                    
+                    if (prediction === 'Phishing Website') {
+                        // If phishing, change background to red and show overlay
+                        $('body').css('background-color', '#ffcccc');
+                        $('.overlay').fadeIn();
+                        $('#result').removeClass('legitimate-result').addClass('phishing-result');
+                        $('#phishing-image').fadeIn(); // Show phishing image
+                    } else {
+                        // If not phishing, reset background and hide overlay
+                        $('body').css('background-color', '#f9f9f9');
+                        $('.overlay').fadeOut();
+                        $('#result').removeClass('phishing-result').addClass('legitimate-result');
+                        $('#phishing-image').fadeOut(); // Hide phishing image
+                    }
+                },
+                error: function(error) {
+                    alert('Error: ' + error.responseText); // Handle errors
+                }
+            });
+        });
+    </script>
+</body>
+</html>
